@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,5 +27,14 @@ public class CategoryService {
         List<CategoryDto> listDto = list.stream()
                 .map(x -> new CategoryDto(x)).collect(Collectors.toList());
         return listDto;
+    }
+
+    @Transactional(readOnly = true)
+    public CategoryDto findById(Long id) {
+        Optional<Category> obj = repository.findById(id);
+
+        // método get do Opitional obtém o objeto que esta dentro do Opitional
+        Category entity = obj.get();
+        return new CategoryDto(entity);
     }
 }
