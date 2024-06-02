@@ -3,9 +3,12 @@ package com.sirkaue.dscatalog.services;
 import com.sirkaue.dscatalog.dto.CategoryDto;
 import com.sirkaue.dscatalog.entities.Category;
 import com.sirkaue.dscatalog.repositories.CategoryRepository;
+import com.sirkaue.dscatalog.services.exceptions.DatabaseException;
 import com.sirkaue.dscatalog.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +59,14 @@ public class CategoryService {
             entity = repository.save(entity);
             return new CategoryDto(entity);
         } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException(String.format("ID %id not found", id));
+            throw new ResourceNotFoundException(String.format("ID %s not found", id));
         }
+    }
+
+    public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new DatabaseException("Integrity violation");
+        }
+        repository.deleteById(id);
     }
 }
