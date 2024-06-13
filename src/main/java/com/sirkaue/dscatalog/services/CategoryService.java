@@ -8,11 +8,10 @@ import com.sirkaue.dscatalog.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,12 +21,8 @@ public class CategoryService {
     private CategoryRepository repository;
 
     @Transactional(readOnly = true)
-    public Page<CategoryDto> findAllPaged(PageRequest pageRequest) {
-        Page<Category> list = repository.findAll(pageRequest);
-
-        // stream - converte coleção (lista) para stream.
-        // map - transforma cada elemento original em outra coisa. Aplica uma função a cada elemento da lista.
-
+    public Page<CategoryDto> findAllPaged(Pageable pageable) {
+        Page<Category> list = repository.findAll(pageable);
         Page<CategoryDto> listDto = list.map(x -> new CategoryDto(x));
         return listDto;
     }
