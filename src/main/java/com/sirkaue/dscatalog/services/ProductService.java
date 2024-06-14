@@ -35,11 +35,9 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductDto findById(Long id) {
-        Optional<Product> obj = repository.findById(id);
-
-        // método get do Opitional obtém o objeto que esta dentro do Opitional
-        Product entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
-        return new ProductDto(entity, entity.getCategories());
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+        return new ProductDto(product, product.getCategories());
     }
 
     @Transactional
@@ -64,9 +62,13 @@ public class ProductService {
 
     public void delete(Long id) {
         if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Resource not found");
+        }
+        try {
+            repository.deleteById(id);
+        } catch (DatabaseException e) {
             throw new DatabaseException("Integrity violation");
         }
-        repository.deleteById(id);
     }
 
     private void copyDtoToEntity(ProductDto dto, Product entity) {
