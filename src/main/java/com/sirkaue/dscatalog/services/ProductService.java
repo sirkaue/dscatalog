@@ -15,8 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 public class ProductService {
 
@@ -67,7 +65,8 @@ public class ProductService {
         try {
             repository.deleteById(id);
         } catch (DatabaseException e) {
-            throw new DatabaseException("Integrity violation");
+            throw new DatabaseException(String.format("Unable to delete resource with ID %s. " +
+                    "The resource is associated with other entities", id));
         }
     }
 
