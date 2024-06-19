@@ -10,13 +10,12 @@ import com.sirkaue.dscatalog.services.exceptions.DatabaseException;
 import com.sirkaue.dscatalog.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -60,6 +59,7 @@ public class ProductService {
             throw new ResourceNotFoundException(String.format("ID %s not found", id));
         }
     }
+
     @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
         if (!repository.existsById(id)) {
@@ -67,7 +67,7 @@ public class ProductService {
         }
         try {
             repository.deleteById(id);
-        } catch (DatabaseException e) {
+        } catch (DataIntegrityViolationException e) {
             throw new DatabaseException(String.format("Unable to delete resource with ID %s. " +
                     "The resource is associated with other entities", id));
         }
