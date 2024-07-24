@@ -8,9 +8,9 @@ import com.sirkaue.dscatalog.repositories.CategoryRepository;
 import com.sirkaue.dscatalog.repositories.ProductRepository;
 import com.sirkaue.dscatalog.services.exceptions.DatabaseException;
 import com.sirkaue.dscatalog.services.exceptions.ResourceNotFoundException;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -50,23 +50,22 @@ public class ProductService {
 
     @Transactional
     public ProductDto update(Long id, ProductDto dto) {
-        try {
-            Product entity = repository.getReferenceById(id);
-            copyDtoToEntity(dto, entity);
-            entity = repository.save(entity);
-            return new ProductDto(entity);
-        } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException(String.format("ID %s not found", id));
-        }
+        Optional<Product> obj = repository.findById(id);
+        Product entity = obj.orElseThrow(() -> new ResourceNotFoundException(String.format("ID %s not found", id)));
+        copyDtoToEntity(dto, entity);
+        entity = repository.save(entity);
+        return new ProductDto(entity, entity.getCategories());
     }
 
     @Transactional
     public void delete(Long id) {
         if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Entity not found");
+            throw new ResourceNotFoundException("Id not found" + id);
         }
         try {
             repository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(String.format("Id %s not found", id));
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException(String.format("Unable to delete resource with ID %s. " +
                     "The resource is associated with other entities", id));
