@@ -14,8 +14,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -29,15 +30,14 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Page<ProductDto> findAllPaged(Pageable pageable) {
         Page<Product> list = repository.findAll(pageable);
-        Page<ProductDto> listDto = list.map(x -> new ProductDto(x));
-        return listDto;
+        return list.map(entity -> new ProductDto(entity));
     }
 
     @Transactional(readOnly = true)
     public ProductDto findById(Long id) {
-        Product product = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
-        return new ProductDto(product, product.getCategories());
+        Optional<Product> obj = repository.findById(id);
+        Product entity = obj.orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+        return new ProductDto(entity, entity.getCategories());
     }
 
     @Transactional
@@ -60,10 +60,10 @@ public class ProductService {
         }
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS)
+    @Transactional
     public void delete(Long id) {
         if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Resource not found");
+            throw new ResourceNotFoundException("Entity not found");
         }
         try {
             repository.deleteById(id);

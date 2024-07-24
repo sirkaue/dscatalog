@@ -30,8 +30,6 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CategoryDto findById(Long id) {
         Optional<Category> obj = repository.findById(id);
-
-        // método get do Opitional obtém o objeto que esta dentro do Opitional
         Category entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
         return new CategoryDto(entity);
     }
