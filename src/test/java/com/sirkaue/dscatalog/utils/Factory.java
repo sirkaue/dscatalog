@@ -7,6 +7,7 @@ import com.sirkaue.dscatalog.entities.Product;
 import java.time.Instant;
 
 public class Factory {
+
     public static Product createProduct() {
         Product product = new Product(
                 1L,
@@ -15,12 +16,22 @@ public class Factory {
                 800.0,
                 "https://img.com/img.png", Instant.parse(
                 "2024-06-01T12:00:00Z"));
-        product.getCategories().add(new Category(2L, "Eletronics"));
+        product.getCategories().add(new Category(2L, "Electronics"));
         return product;
     }
 
     public static ProductDto createProductDto() {
         Product product = createProduct();
         return new ProductDto(product, product.getCategories());
+    }
+
+    public static ProductDto createUpdatedProductDto(Long existingId) {
+        return new ProductDto(
+                existingId,
+                "Updated Name",
+                "Updated Description",
+                1200.0,
+                "https://img.com/newimg.png",
+                Instant.now());
     }
 }
