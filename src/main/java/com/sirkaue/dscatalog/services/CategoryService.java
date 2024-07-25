@@ -50,7 +50,7 @@ public class CategoryService {
             entity = repository.save(entity);
             return new CategoryDto(entity);
         } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException(String.format("ID %s not found", id));
+            throw new ResourceNotFoundException(String.format("ID '%d' not found", id));
         }
     }
 

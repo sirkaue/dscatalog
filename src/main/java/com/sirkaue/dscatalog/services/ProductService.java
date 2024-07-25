@@ -37,7 +37,7 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductDto findById(Long id) {
         Optional<Product> obj = repository.findById(id);
-        Product entity = obj.orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+        Product entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
         return new ProductDto(entity, entity.getCategories());
     }
 
@@ -57,21 +57,21 @@ public class ProductService {
             entity = repository.save(entity);
             return new ProductDto(entity, entity.getCategories());
         } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException(String.format("ID %s not found", id));
+            throw new ResourceNotFoundException(String.format("ID '%d' not found", id));
         }
     }
 
     @Transactional
     public void delete(Long id) {
         if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Id not found" + id);
+            throw new ResourceNotFoundException(String.format("ID '%d' not found", id));
         }
         try {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new ResourceNotFoundException(String.format("Id %s not found", id));
+            throw new ResourceNotFoundException(String.format("Id %d not found", id));
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException(String.format("Unable to delete resource with ID %s. " +
+            throw new DatabaseException(String.format("Unable to delete resource with ID '%d'. " +
                     "The resource is associated with other entities", id));
         }
     }
