@@ -8,6 +8,7 @@ import com.sirkaue.dscatalog.repositories.CategoryRepository;
 import com.sirkaue.dscatalog.repositories.ProductRepository;
 import com.sirkaue.dscatalog.services.exceptions.DatabaseException;
 import com.sirkaue.dscatalog.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -50,11 +51,14 @@ public class ProductService {
 
     @Transactional
     public ProductDto update(Long id, ProductDto dto) {
-        Optional<Product> obj = repository.findById(id);
-        Product entity = obj.orElseThrow(() -> new ResourceNotFoundException(String.format("ID %s not found", id)));
-        copyDtoToEntity(dto, entity);
-        entity = repository.save(entity);
-        return new ProductDto(entity, entity.getCategories());
+        try {
+            Product entity = repository.getReferenceById(id);
+            copyDtoToEntity(dto, entity);
+            entity = repository.save(entity);
+            return new ProductDto(entity, entity.getCategories());
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(String.format("ID %s not found", id));
+        }
     }
 
     @Transactional
