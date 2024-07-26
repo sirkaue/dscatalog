@@ -1,6 +1,8 @@
 package com.sirkaue.dscatalog.dto;
 
 import com.sirkaue.dscatalog.entities.User;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -9,8 +11,12 @@ import java.util.Set;
 public class UserDto implements Serializable {
 
     private Long id;
+
+    @NotBlank(message = "Campo obrigatório")
     private String firstName;
     private String lastName;
+
+    @Email(message = "Favor entrar um email válido")
     private String email;
 
     Set<RoleDto> roles = new HashSet<>();
