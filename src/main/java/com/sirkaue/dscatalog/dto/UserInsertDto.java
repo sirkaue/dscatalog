@@ -1,5 +1,8 @@
 package com.sirkaue.dscatalog.dto;
 
+import com.sirkaue.dscatalog.services.validation.UserInsertValid;
+
+@UserInsertValid
 public class UserInsertDto extends UserDto {
 
     private String password;
