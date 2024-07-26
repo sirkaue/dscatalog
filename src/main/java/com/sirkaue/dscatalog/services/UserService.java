@@ -3,6 +3,7 @@ package com.sirkaue.dscatalog.services;
 import com.sirkaue.dscatalog.dto.RoleDto;
 import com.sirkaue.dscatalog.dto.UserDto;
 import com.sirkaue.dscatalog.dto.UserInsertDto;
+import com.sirkaue.dscatalog.dto.UserUpdateDto;
 import com.sirkaue.dscatalog.entities.Role;
 import com.sirkaue.dscatalog.entities.User;
 import com.sirkaue.dscatalog.repositories.RoleRepository;
@@ -56,7 +57,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto update(Long id, UserDto dto) {
+    public UserDto update(Long id, UserUpdateDto dto) {
         try {
             User entity = repository.getReferenceById(id);
             copyDtoToEntity(dto, entity);
