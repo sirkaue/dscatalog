@@ -2,7 +2,6 @@ package com.sirkaue.dscatalog.resources;
 
 import com.sirkaue.dscatalog.dto.CategoryDto;
 import com.sirkaue.dscatalog.services.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +14,11 @@ import java.net.URI;
 @RequestMapping("/categories")
 public class CategoryResource {
 
-    @Autowired
-    private CategoryService service;
+    private final CategoryService service;
+
+    public CategoryResource(CategoryService service) {
+        this.service = service;
+    }
 
     @GetMapping
     public ResponseEntity<Page<CategoryDto>> findAll(Pageable pageable) {

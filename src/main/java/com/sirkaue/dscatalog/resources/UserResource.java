@@ -5,7 +5,6 @@ import com.sirkaue.dscatalog.dto.UserInsertDto;
 import com.sirkaue.dscatalog.dto.UserUpdateDto;
 import com.sirkaue.dscatalog.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +17,11 @@ import java.net.URI;
 @RequestMapping("/users")
 public class UserResource {
 
-    @Autowired
-    private UserService service;
+    private final UserService service;
+
+    public UserResource(UserService service) {
+        this.service = service;
+    }
 
     @GetMapping
     public ResponseEntity<Page<UserDto>> findAll(Pageable pageable) {
